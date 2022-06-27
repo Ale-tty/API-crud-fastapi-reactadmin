@@ -1,0 +1,3 @@
+MONGO_DETAILS="stringConection"
+secret=update_me
+algorithm=HS256

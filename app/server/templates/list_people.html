@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}List of people{% endblock %}
+
+{% block content %}
+
+<script>
+    function getPeople(){
+        $('#peopleBody').html('');
+        $.ajax({
+            url: '/people',
+            headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log(data.data)
+                $(data.data).each(function(i, person){
+                    $('#peopleBody').append($("<tr>")
+                                            .append($(`<td data-personid="`+person.id+`" style="cursor:pointer; color:blue; text-decoration:underline;" class="personListId">`).append(person.id))
+                                            .append($("<td>").append(person.firstname))
+                                            .append($("<td>").append(person.lastname))
+                                            .append($("<td>").append(`<i style="cursor:pointer;" class="far fa-edit editPerson" data-personid="`+person.id+`"></i>`))
+                                            .append($("<td>").append(`<i style="cursor:pointer;" class="fas fa-trash deletePerson" data-personid="`+person.id+`"></i>`))
+                                            );
+                    });
+                loadButtons();
+                document.getElementById('logged').innerHTML = 'Logout';
+            }
+        });
+    }
+
+    function loadButtons() {
+        $(".editPerson").click(function(e){
+            window.location.href = '/edit/'+$($(this)[0]).data("personid");
+            e.preventDefault();
+        });
+        
+        $(".deletePerson").click(function(e){
+            deletePerson($($(this)[0]).data("personid"));
+            e.preventDefault();
+        })
+        
+        $(".personListId").click(function(e){
+            window.location.href = '/view/'+$($(this)[0]).data("personid");
+            e.preventDefault();
+        });
+    }
+
+    function deletePerson(id){
+        $.ajax({
+            url: '/people/' + id,
+            headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+            method: 'DELETE',
+            dataType: 'json',
+            success: function(data) {
+                //console.log(data);
+                getPeople();
+            }
+        });
+    }
+
+    getPeople();
+</script>
+
+<div>
+    <h1 style="display: inline-block;"> List of people </h1>
+    <p style="display: inline-block; margin-top: 5px; float:right" ><a id="logged" href='/login'>Login</a></p>
+</div>
+
+<table id="tutorialsTable" class="table  table-hover table-sm">
+    <thead>
+        <tr>
+            <td>ID</td>
+            <td>First name</td>
+            <td>Last name</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </thead>
+    <tbody id="peopleBody">
+</table>
+
+<a class="btn btn-success" href="/createui">New person</a>
+
+{% endblock %}

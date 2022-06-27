@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block title %}Person details{% endblock %}
+
+{% block content %}
+
+<script>
+    function getOnePersonView(id){
+        $.ajax({
+            url: '/people/' + id,
+            headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                document.getElementById("personViewId").innerHTML = data.data.id;
+                document.getElementById("personViewFirstName").innerHTML = data.data.firstname;
+                document.getElementById("personViewLastName").innerHTML = data.data.lastname;
+            }
+        });
+    }
+
+    getOnePersonView(window.location.href.split('/').at(-1));
+</script>
+
+<h1>Person details</h1>
+<hr>
+<div>
+    <p style="display: inline-block;"><strong>Id: </strong></p>
+    <p style="display: inline-block;" id="personViewId"></p>
+</div>
+<div>
+    <p style="display: inline-block;"><strong>First name: </strong></p>
+    <p style="display: inline-block;" id="personViewFirstName"></p>
+</div>
+<div>
+    <p style="display: inline-block;"><strong>Last name: </strong></p>
+    <p style="display: inline-block;" id="personViewLastName"></p>
+</div>
+
+{% endblock %}

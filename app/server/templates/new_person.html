@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block title %}Create a new person{% endblock %}
+
+{% block content %}
+
+<script>
+  function postPerson() {
+    let person = {
+          firstname: $("#newPersonFirstName").val(),
+          lastname: $("#newPersonLastName").val()
+    } 
+
+    $.ajax({
+        url: '/people',
+        headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(person),
+        dataType: 'json',
+        success: function(data) {
+            //console.log(data);
+        }
+    });
+    document.getElementById('newPersonFirstName').value = ''
+    document.getElementById('newPersonLastName').value = ''
+    window.location.href = "/";
+  }
+</script>
+
+<div class="card text-left" style="width: 100%;align:center;">
+    <div class="card-body">
+      <div class="card-header">
+        <h1> Create a new person </h1>
+      </div>
+      <div id="newform" class="form" >
+          <div class="mb-3 field">
+              <label class="form-label">First name</label>
+              <input type="text" class="form-control" id="newPersonFirstName" placeholder="first name">
+          </div>
+          <div class="mb-3 field">
+              <label class="form-label">Last name</label>
+              <input type="text" class="form-control" id="newPersonLastName" placeholder="last name">
+          </div>
+        </div>
+      <button onclick="postPerson()" id="add_person" class="btn btn-primary">Add</button>
+    </div>
+</div>
+
+{% endblock %}

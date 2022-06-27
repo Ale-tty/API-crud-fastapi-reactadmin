@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<script>
+    function login() {
+
+        let user = {
+            email: $("#email").val(),
+            password: $("#password").val()
+        } 
+
+        $.ajax({
+            url: '/user/login',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(user),
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                //https://stackoverflow.com/questions/62951406/how-do-you-integrate-html-page-with-jwt-node-js-auth
+                localStorage.setItem('token', data.access_token); 
+            }
+        });
+
+        document.getElementById('email').value = ''
+        document.getElementById('password').value = ''
+        window.location.href = "/";
+    }
+
+    localStorage.clear()
+</script>
+
+<div class="card text-left" style="width: 100%;align:center;">
+    <div class="card-body">
+      <div class="card-header">
+        <h1> Login </h1>
+      </div>
+      <div id="loginForm" class="form" >
+          <div class="mb-3 field">
+              <label class="form-label">Email</label>
+              <input type="text" class="form-control" id="email" value="admin@admin.com" placeholder="email">
+          </div>
+          <div class="mb-3 field">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" value="admin" placeholder="password">
+          </div>
+        </div>
+      <button onclick="login()" id="login" class="btn btn-primary">Login</button>
+    </div>
+</div>
+
+{% endblock %}

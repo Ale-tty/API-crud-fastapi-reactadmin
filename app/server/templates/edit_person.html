@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit person{% endblock %}
+
+{% block content %}
+<script>
+  function getOnePersonEdit(id){
+      $.ajax({
+          url: '/people/' + id,
+          headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+              console.log(data.data[0])
+              document.getElementById("editPersonId").value = data.data.id;
+              document.getElementById("editPersonFirstName").value = data.data.firstname;
+              document.getElementById("editPersonLastName").value = data.data.lastname;
+          }
+      });
+  }
+
+  getOnePersonEdit(window.location.href.split('/').at(-1));
+
+  function putPerson() {
+    let person = {
+          firstname: $("#editPersonFirstName").val(),
+          lastname: $("#editPersonLastName").val()
+    } 
+
+    $.ajax({
+        url: '/people/' + window.location.href.split('/').at(-1),
+        headers: {'Authorization':'Bearer ' + localStorage.getItem('token')},
+        method: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(person),
+        dataType: 'json',
+        success: function(data) {
+            //console.log(data);
+        }
+    });
+
+    window.location.href = "/";
+  }
+</script>
+
+<div class="card text-left" style="width: 100%;align:center;">
+  <div class="card-body">
+    <div class="card-header">
+      <h1> Edit person </h1>
+    </div>
+    <div id="editform" class="form" >
+        <div class="mb-3 field">
+          <label class="form-label">Id</label>
+          <input type="text" class="form-control" id="editPersonId" readonly>
+        </div>
+        <div class="mb-3 field">
+            <label class="form-label">First name</label>
+            <input type="text" class="form-control" id="editPersonFirstName" placeholder="first name">
+        </div>
+        <div class="mb-3 field">
+            <label class="form-label">Last name</label>
+            <input type="text" class="form-control" id="editPersonLastName" placeholder="last name">
+        </div>
+      </div>
+    <button onclick="putPerson()" id="add_person" class="btn btn-primary">Edit</button>
+  </div>
+</div>
+
+{% endblock %}
